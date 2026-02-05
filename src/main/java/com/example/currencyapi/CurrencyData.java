@@ -7,7 +7,7 @@ import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-@JsonIgnoreProperties(value = {"USD"})
+//@JsonIgnoreProperties(value = {"USD"})
 
 public class CurrencyData {
     @JsonProperty("amount")
@@ -18,8 +18,6 @@ public class CurrencyData {
     LocalDate date;
     @JsonProperty("rates")
     RatesData ratesData;
-    @JsonProperty("USD")
-    Float output;
 
     public Float getAmount() {
         return amount;
@@ -59,18 +57,6 @@ public class CurrencyData {
 
     public void setRatesData(RatesData ratesData) {
         this.ratesData = ratesData;
-    }
-
-    public Float getOutput() {
-        return output;
-    }
-
-    public void setOutput(String output) {
-        this.output = Float.parseFloat(output);
-    }
-
-    public void setOutput(Float output) {
-        this.output = output;
     }
 }
 
