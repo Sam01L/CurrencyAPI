@@ -58,7 +58,7 @@ public class CurrencyData {
     public void setRatesData(RatesData ratesData) {
         this.ratesData = ratesData;
     }
-}
+
 
 
 /*{
@@ -71,3 +71,9 @@ public class CurrencyData {
         }
         /
  */
+
+    public String toString() {
+        return "CurrencyData: amount=" + amount +" Sam Liu:";
+    }
+
+}

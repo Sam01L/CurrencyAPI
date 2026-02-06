@@ -3,19 +3,16 @@ package com.example.currencyapi;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 public class HelloController {
-    @FXML
-    private Label welcomeText;
-
-    @FXML
-    protected void onHelloButtonClick() {
-        welcomeText.setText("Welcome to JavaFX Application!");
-    }
+    public TextField baseTextField;
+    public TextField rateTextField;
+    public TextField convertionTextField;
 
     public void initialize() throws Exception {
         String yourAPIurl = "https://api.frankfurter.dev/v1/latest?symbols=USD";
@@ -40,5 +37,12 @@ public class HelloController {
         ObjectMapper objectMapper = new ObjectMapper();
         CurrencyData myData = objectMapper.readValue(JSONstring.toString(), CurrencyData.class);
         System.out.println("OBJECT: " + myData);
+
+        rateTextField.setText("????");
+    }
+
+    public void convertCurrency() {
+
+
     }
 }
