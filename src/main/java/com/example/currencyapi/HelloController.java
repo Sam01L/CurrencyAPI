@@ -49,6 +49,6 @@ public class HelloController {
     }
 
     public void convertCurrency() {
-        //baseTextField = baseTypedIn;
+        //baseTextField = baseTypedIn;.
     }
 }

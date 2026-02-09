@@ -61,7 +61,7 @@ public class CurrencyData {
 
 
 
-/*{
+/*{.
         "amount": 1,
         "base": "EUR",
         "date": "2026-02-02",
