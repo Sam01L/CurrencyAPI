@@ -15,7 +15,14 @@ public class HelloController {
     public TextField convertionTextField;
 
     public void initialize() throws Exception {
-        String yourAPIurl = "https://api.frankfurter.dev/v1/latest?symbols=USD";
+    }
+
+    public void getRate() throws Exception {
+        String baseTypedIn = baseTextField.getText();
+        String conversionTypedIn = convertionTextField.getText();
+        // ??? get baseTypedIn from a text field
+        //https://api.frankfurter.dev/v1/latest?base=EUR&symbols=USD
+        String yourAPIurl = "https://api.frankfurter.dev/v1/latest?base=" + baseTypedIn + "&symbols=" + conversionTypedIn;
         String yourAPIkey = "YOUR API KEY";
         URL APIurl = new URL(yourAPIurl);
         HttpURLConnection APIconnection = (HttpURLConnection) APIurl.openConnection();
@@ -38,11 +45,10 @@ public class HelloController {
         CurrencyData myData = objectMapper.readValue(JSONstring.toString(), CurrencyData.class);
         System.out.println("OBJECT: " + myData);
 
-        rateTextField.setText("????");
+        rateTextField.setText(String.valueOf(myData.ratesData.getUSD()));
     }
 
     public void convertCurrency() {
-
-
+        //baseTextField = baseTypedIn;
     }
 }
