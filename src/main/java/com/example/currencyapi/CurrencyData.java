@@ -61,7 +61,7 @@ public class CurrencyData {
 
 
 
-/*{.
+/*{
         "amount": 1,
         "base": "EUR",
         "date": "2026-02-02",
@@ -73,7 +73,7 @@ public class CurrencyData {
  */
 
     public String toString() {
-        return "CurrencyData: amount=" + amount +" Sam Liu:";
+        return "CurrencyData: amount=" + amount + " base:" + base + " USDrate:" + ratesData.getUSD() + " EURrate:" + ratesData.getEUR();
     }
 
 }
