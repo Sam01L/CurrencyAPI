@@ -3,6 +3,7 @@ package com.example.currencyapi;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
@@ -11,20 +12,25 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 public class HelloController {
-    public TextField baseTextField;
+    public ChoiceBox<String> baseChoiceBox;
     public TextField rateTextField;
-    public TextField convertionTextField;
+    public ChoiceBox<String> conversionChoiceBox;
 
     public void initialize() throws Exception {
+        baseChoiceBox.getItems().addAll("EUR", "USD", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "BRL", "INR");
+        conversionChoiceBox.getItems().addAll("EUR", "USD", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "BRL", "INR");
+
+        baseChoiceBox.setValue("EUR");
+        conversionChoiceBox.setValue("USD");
     }
 
     public void getRate() throws Exception {
-        String baseTypedIn = baseTextField.getText();
-        String conversionTypedIn = convertionTextField.getText();
-        // ??? get baseTypedIn from a text field
-        //String yourAPIurl = "https://api.frankfurter.dev/v1/latest?symbols=USD";
-        String yourAPIurl = "https://api.frankfurter.dev/v1/latest?base=" + "EUR" + "&symbols=" + "USD";
+        String baseTypedIn = baseChoiceBox.getValue();
+        String conversionTypedIn = conversionChoiceBox.getValue();
+
+        String yourAPIurl = "https://api.frankfurter.dev/v1/latest?base=" + baseTypedIn + "&symbols=" + conversionTypedIn;
         String yourAPIkey = "YOUR API KEY";
         URL APIurl = new URL(yourAPIurl);
         HttpURLConnection APIconnection = (HttpURLConnection) APIurl.openConnection();
@@ -41,23 +47,16 @@ public class HelloController {
         APIreader.close();
         System.out.println(JSONstring);
 
-        // JSONString has already been read from URL
-        // read 1 JSON object ("key":"value" pairs) into fields of MODEL object
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(JSONstring.toString());
         String amountString = jsonNode.get("amount").toString();
         String baseString = jsonNode.get("base").toString();
-        String usdRate = null;
+
+        String rateString = null;
         try {
-            usdRate = jsonNode.get("rates").get("USD").toString();
+            rateString = jsonNode.get("rates").get(conversionTypedIn).toString();
         } catch (Exception ex) {
-            System.out.println("NO USD rate");
-        }
-        String eurRate = null;
-        try {
-            eurRate = jsonNode.get("rates").get("EUR").toString();
-        } catch (Exception ex) {
-            System.out.println("NO EUR rate");
+            System.out.println("NO " + conversionTypedIn + " rate");
         }
 
         CurrencyData myData = new CurrencyData();
@@ -66,21 +65,16 @@ public class HelloController {
         myData.setAmount(Float.parseFloat(amountString));
         myData.setBase(baseString);
         Float rateWeGot = 0f;
-        if (usdRate != null) {
-            myData.getRatesData().setUSD(Float.parseFloat(usdRate));
-            rateWeGot = Float.parseFloat(usdRate);
-        }
-        if (eurRate != null) {
-            myData.getRatesData().setEUR(Float.parseFloat(eurRate));
-            rateWeGot = Float.parseFloat(eurRate);
 
+        if (rateString != null) {
+            rateWeGot = Float.parseFloat(rateString);
         }
+
         System.out.println("OBJECT: " + myData);
 
         rateTextField.setText(String.valueOf(rateWeGot));
     }
 
     public void convertCurrency() {
-        //baseTextField = baseTypedIn;
     }
 }
