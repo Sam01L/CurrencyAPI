@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="319.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.currencyapi.HelloController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="429.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.currencyapi.HelloController">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="75.0" layoutX="182.0" layoutY="20.0" stroke="BLACK" strokeType="INSIDE" width="232.0" />
       <Label layoutX="188.0" layoutY="17.0" prefHeight="81.0" prefWidth="225.0" text="Currency Exchanger">
@@ -36,6 +36,24 @@
       </Label>
       <ChoiceBox fx:id="conversionChoiceBox" layoutX="364.0" layoutY="160.0" prefWidth="150.0" />
       <Button layoutX="270.0" layoutY="245.0" mnemonicParsing="false" onAction="#getRate" text="Get Rate">
+         <font>
+            <Font name="Avenir Roman" size="14.0" />
+         </font>
+      </Button>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="116.0" layoutX="66.0" layoutY="290.0" stroke="BLACK" strokeType="INSIDE" width="482.0" />
+      <TextField fx:id="Amount" layoutX="110.0" layoutY="335.0" />
+      <TextField fx:id="ConvertedAmount" layoutX="346.0" layoutY="336.0" />
+      <Label layoutX="130.0" layoutY="302.0" text="Type Amount You're Converting In Left Box">
+         <font>
+            <Font name="Avenir Roman" size="18.0" />
+         </font>
+      </Label>
+      <Button layoutX="107.0" layoutY="363.0" mnemonicParsing="false" onAction="#setQuickAmount" prefHeight="26.0" prefWidth="27.0" text="5" />
+      <Button layoutX="135.0" layoutY="363.0" mnemonicParsing="false" onAction="#setQuickAmount" text="10" />
+      <Button layoutX="167.0" layoutY="363.0" mnemonicParsing="false" onAction="#setQuickAmount" text="20" />
+      <Button layoutX="201.0" layoutY="363.0" mnemonicParsing="false" onAction="#setQuickAmount" text="50" />
+      <Button layoutX="235.0" layoutY="363.0" mnemonicParsing="false" onAction="#setQuickAmount" text="100" />
+      <Button layoutX="373.0" layoutY="363.0" mnemonicParsing="false" onAction="#convertCurrency" text="Get Exchange">
          <font>
             <Font name="Avenir Roman" size="14.0" />
          </font>

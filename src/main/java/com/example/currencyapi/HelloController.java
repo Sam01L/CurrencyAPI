@@ -2,7 +2,9 @@ package com.example.currencyapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -17,6 +19,8 @@ public class HelloController {
     public ChoiceBox<String> baseChoiceBox;
     public TextField rateTextField;
     public ChoiceBox<String> conversionChoiceBox;
+    public TextField Amount;
+    public TextField ConvertedAmount;
 
     public void initialize() throws Exception {
         baseChoiceBox.getItems().addAll("EUR", "USD", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "BRL", "INR");
@@ -75,6 +79,31 @@ public class HelloController {
         rateTextField.setText(String.valueOf(rateWeGot));
     }
 
-    public void convertCurrency() {
+    public void convertCurrency() throws Exception {
+        String amountText = Amount.getText();
+
+        if (amountText.isEmpty()) {
+            ConvertedAmount.setText("Enter amount");
+            return;
+        }
+
+        float amountValue = Float.parseFloat(amountText);
+        String rateText = rateTextField.getText();
+
+        if (rateText.isEmpty() || rateText.equals("0.0")) {
+            ConvertedAmount.setText("Get rate first");
+            return;
+        }
+
+        float rate = Float.parseFloat(rateText);
+        float convertedValue = amountValue * rate;
+
+        ConvertedAmount.setText(String.format("%.2f", convertedValue));
+    }
+
+    public void setQuickAmount(ActionEvent event) {
+        Button clickedButton = (Button) event.getSource();
+        String buttonText = clickedButton.getText();
+        Amount.setText(buttonText);
     }
 }
