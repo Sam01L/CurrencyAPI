@@ -2,12 +2,17 @@ package com.example.currencyapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import javax.swing.plaf.ColorUIResource;
 import java.io.BufferedReader;
@@ -21,6 +26,7 @@ public class HelloController {
     public ChoiceBox<String> conversionChoiceBox;
     public TextField Amount;
     public TextField ConvertedAmount;
+    public LineChart<Number,Number> CurrencyChart;
 
     public void initialize() throws Exception {
         baseChoiceBox.getItems().addAll("EUR", "USD", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "BRL", "INR");
@@ -28,6 +34,26 @@ public class HelloController {
 
         baseChoiceBox.setValue("EUR");
         conversionChoiceBox.setValue("USD");
+
+
+
+        CurrencyChart.getXAxis().setLabel("Time Sam");
+        CurrencyChart.getYAxis().setLabel("Amount Sam");
+
+        XYChart.Series<Number,Number> series = new XYChart.Series<Number,Number>();
+        series.setName("No of schools in an year");
+
+        series.getData().add(new XYChart.Data<Number,Number>(1970, 15));
+        //series.getData().add(new XYChart.Data<Integer,Integer>(1980, 30));
+        //series.getData().add(new XYChart.Data<Integer,Integer>(1990, 60));
+        //series.getData().add(new XYChart.Data<Integer,Integer>(2000, 120));
+        //series.getData().add(new XYChart.Data<Integer,Integer>(2013, 240));
+        //series.getData().add(new XYChart.Data<Integer,Integer>(2014, 300));
+
+//Setting the data to Line chart
+        CurrencyChart.getData().clear();
+        CurrencyChart.getData().add(series);
+
     }
 
     public void getRate() throws Exception {
