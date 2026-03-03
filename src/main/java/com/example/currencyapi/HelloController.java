@@ -2,21 +2,18 @@ package com.example.currencyapi;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.chart.XYChart;
 
-import javax.swing.plaf.ColorUIResource;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -26,7 +23,10 @@ public class HelloController {
     public ChoiceBox<String> conversionChoiceBox;
     public TextField Amount;
     public TextField ConvertedAmount;
-    public LineChart<Number,Number> CurrencyChart;
+    public javafx.scene.chart.LineChart<Number, Number> CurrencyChart;
+
+    private List<LineChart> historicalData;
+    private static final String DATA_FILE = "currency_history.dat";
 
     public void initialize() throws Exception {
         baseChoiceBox.getItems().addAll("EUR", "USD", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "BRL", "INR");
@@ -35,25 +35,15 @@ public class HelloController {
         baseChoiceBox.setValue("EUR");
         conversionChoiceBox.setValue("USD");
 
+        loadHistoricalData();
 
+        baseChoiceBox.setOnAction(event -> updateChart());
+        conversionChoiceBox.setOnAction(event -> updateChart());
 
-        CurrencyChart.getXAxis().setLabel("Time Sam");
-        CurrencyChart.getYAxis().setLabel("Amount Sam");
+        CurrencyChart.getXAxis().setLabel("Days Ago");
+        CurrencyChart.getYAxis().setLabel("Exchange Rate");
 
-        XYChart.Series<Number,Number> series = new XYChart.Series<Number,Number>();
-        series.setName("No of schools in an year");
-
-        series.getData().add(new XYChart.Data<Number,Number>(1970, 15));
-        //series.getData().add(new XYChart.Data<Integer,Integer>(1980, 30));
-        //series.getData().add(new XYChart.Data<Integer,Integer>(1990, 60));
-        //series.getData().add(new XYChart.Data<Integer,Integer>(2000, 120));
-        //series.getData().add(new XYChart.Data<Integer,Integer>(2013, 240));
-        //series.getData().add(new XYChart.Data<Integer,Integer>(2014, 300));
-
-//Setting the data to Line chart
-        CurrencyChart.getData().clear();
-        CurrencyChart.getData().add(series);
-
+        updateChart();
     }
 
     public void getRate() throws Exception {
@@ -103,6 +93,9 @@ public class HelloController {
         System.out.println("OBJECT: " + myData);
 
         rateTextField.setText(String.valueOf(rateWeGot));
+
+        saveRateToHistory(baseTypedIn, conversionTypedIn, rateWeGot);
+        updateChart();
     }
 
     public void convertCurrency() throws Exception {
@@ -131,5 +124,91 @@ public class HelloController {
         Button clickedButton = (Button) event.getSource();
         String buttonText = clickedButton.getText();
         Amount.setText(buttonText);
+    }
+
+    private void saveRateToHistory(String base, String conversion, Float rate) {
+        LocalDate today = LocalDate.now();
+
+        LineChart newData = new LineChart(base, conversion, today, rate);
+
+        boolean updated = false;
+        for (int i = 0; i < historicalData.size(); i++) {
+            LineChart existing = historicalData.get(i);
+            if (existing.getBaseCurrency().equals(base) &&
+                    existing.getConversionCurrency().equals(conversion) &&
+                    existing.getDate().equals(today)) {
+                historicalData.set(i, newData);
+                updated = true;
+                break;
+            }
+        }
+
+        if (!updated) {
+            historicalData.add(newData);
+        }
+
+        saveHistoricalData();
+    }
+
+    private void updateChart() {
+        String base = baseChoiceBox.getValue();
+        String conversion = conversionChoiceBox.getValue();
+
+        List<LineChart> filteredData = historicalData.stream()
+                .filter(data -> data.getBaseCurrency().equals(base) &&
+                        data.getConversionCurrency().equals(conversion))
+                .sorted((a, b) -> a.getDate().compareTo(b.getDate()))
+                .collect(Collectors.toList());
+
+        CurrencyChart.getData().clear();
+
+        if (filteredData.isEmpty()) {
+            return;
+        }
+
+        XYChart.Series<Number, Number> series = new XYChart.Series<>();
+        series.setName(base + " to " + conversion);
+
+        LocalDate today = LocalDate.now();
+
+        for (LineChart data : filteredData) {
+            long daysAgo = ChronoUnit.DAYS.between(data.getDate(), today);
+            series.getData().add(new XYChart.Data<>(daysAgo, data.getRate()));
+        }
+
+        CurrencyChart.getData().add(series);
+    }
+
+    private void loadHistoricalData() {
+        try {
+            File file = new File(DATA_FILE);
+            if (file.exists()) {
+                FileInputStream fileIn = new FileInputStream(file);
+                ObjectInputStream in = new ObjectInputStream(fileIn);
+                historicalData = (List<LineChart>) in.readObject();
+                in.close();
+                fileIn.close();
+                System.out.println("Loaded " + historicalData.size() + " historical records");
+            } else {
+                historicalData = new ArrayList<>();
+                System.out.println("No existing data file, starting fresh");
+            }
+        } catch (Exception e) {
+            historicalData = new ArrayList<>();
+            System.out.println("Error loading data: " + e.getMessage());
+        }
+    }
+
+    private void saveHistoricalData() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(DATA_FILE);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(historicalData);
+            out.close();
+            fileOut.close();
+            System.out.println("Saved " + historicalData.size() + " historical records");
+        } catch (Exception e) {
+            System.out.println("Error saving data: " + e.getMessage());
+        }
     }
 }
